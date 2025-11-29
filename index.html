@@ -3,35 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>人机验证</title>
+    <title>Turnstile 人机验证（Netlify 部署）</title>
     <!-- 引入 Cloudflare Turnstile 脚本 -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
-    <!-- 人机验证容器（站点密钥：0x4AAAAAABuV_6cPPwlj1VPo） -->
+    <h3>请完成人机验证</h3>
+    <!-- 验证组件（使用你的站点密钥） -->
     <div class="cf-turnstile" 
          data-sitekey="0x4AAAAAABuV_6cPPwlj1VPo"
-         data-callback="onTurnstileSuccess"
+         data-callback="onVerifySuccess"
          data-theme="light">
     </div>
+    <div id="result" style="margin-top: 20px;"></div>
 
     <script>
-        // 验证成功后的回调函数
-        function onTurnstileSuccess(token) {
-            console.log("验证成功！Token:", token);
-            // 此处可添加验证通过后的逻辑（如提交表单、跳转页面等）
-            alert("人机验证通过！验证Token已打印到控制台");
-            
-            // （可选）如果需要向后端验证，可将 token 发送到后端
-            // 后端需使用你的密钥（0x4AAAAAABuV_3f-MRrgtQ3QM01xaFM5wjc）验证 token 有效性
-            fetch("/your-backend-verify-endpoint", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ turnstileToken: token })
-            })
-            .then(response => response.json())
-            .then(data => console.log("后端验证结果:", data))
-            .catch(error => console.error("验证请求失败:", error));
+        // 验证成功后调用 Netlify 后端函数
+        async function onVerifySuccess(token) {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = "正在验证...";
+
+            try {
+                // 调用 Netlify Functions（路径固定为 /.netlify/functions/函数名）
+                const response = await fetch('/.netlify/functions/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    resultEl.textContent = "验证通过！后端已确认";
+                    resultEl.style.color = "green";
+                } else {
+                    resultEl.textContent = `验证失败：${data.error || data['error-codes']?.join(', ') || '未知错误'}`;
+                    resultEl.style.color = "red";
+                }
+            } catch (err) {
+                resultEl.textContent = "网络错误，验证失败";
+                resultEl.style.color = "red";
+                console.error(err);
+            }
         }
     </script>
 </body>
