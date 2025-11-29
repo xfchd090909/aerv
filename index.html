@@ -39,15 +39,23 @@
         switch (browserLang.simpleLang) {
             case 'zh':
                 verifyTitle.textContent = "请完成人机验证";
-                resultEl.textContent = "请点击下方按钮完成验证...";
+                resultEl.textContent = "请点击按钮完成验证...";
                 break;
             case 'en':
-                verifyTitle.textContent = "Please complete the human verification";
-                resultEl.textContent = "Please click the button below to verify...";
+                verifyTitle.textContent = "Please complete the robot verification.";
+                resultEl.textContent = "Please click the button to complete the verification....";
                 break;
             case 'ja':
-                verifyTitle.textContent = "人間確認を完了してください";
-                resultEl.textContent = "下のボタンをクリックして認証してください...";
+                verifyTitle.textContent = "ロボットの検証を完了してください";
+                resultEl.textContent = "ボタンをクリックして検証を完了してください...";
+                break;
+            case 'ko':
+                verifyTitle.textContent = "로봇 검증을 완료하세요";
+                resultEl.textContent = "확인을 완료하려면 버튼을 클릭하십시오...";
+                break;
+            case 'th':
+                verifyTitle.textContent = "กรุณาตรวจสอบหุ่นยนต์ให้สมบูรณ์";
+                resultEl.textContent = "โปรดคลิกปุ่มเพื่อให้การตรวจสอบหุ่นยนต์เสร็จสมบูรณ์...";
                 break;
             // 可添加更多语言适配
             default:
