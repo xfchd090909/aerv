@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人机验证</title>
+    <!-- 引入 Cloudflare Turnstile 脚本 -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+    <!-- 人机验证容器（站点密钥：0x4AAAAAABuV_6cPPwlj1VPo） -->
+    <div class="cf-turnstile" 
+         data-sitekey="0x4AAAAAABuV_6cPPwlj1VPo"
+         data-callback="onTurnstileSuccess"
+         data-theme="light">
+    </div>
+
+    <script>
+        // 验证成功后的回调函数
+        function onTurnstileSuccess(token) {
+            console.log("验证成功！Token:", token);
+            // 此处可添加验证通过后的逻辑（如提交表单、跳转页面等）
+            alert("人机验证通过！验证Token已打印到控制台");
+            
+            // （可选）如果需要向后端验证，可将 token 发送到后端
+            // 后端需使用你的密钥（0x4AAAAAABuV_3f-MRrgtQ3QM01xaFM5wjc）验证 token 有效性
+            fetch("/your-backend-verify-endpoint", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ turnstileToken: token })
+            })
+            .then(response => response.json())
+            .then(data => console.log("后端验证结果:", data))
+            .catch(error => console.error("验证请求失败:", error));
+        }
+    </script>
+</body>
+</html>
